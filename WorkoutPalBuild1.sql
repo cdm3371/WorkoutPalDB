@@ -4,7 +4,7 @@
 -WorkoutPal DB
 -MySQL 
 -Created 24 December 2016
--Last Update 24 December 2016 at 16:18 EST
+-Last Update 2 February 2017 at 15:47 EST
 */
 
 /* Table Structure Drop in reverse order as listed */
@@ -48,7 +48,7 @@ CREATE TABLE metcons
   CONSTRAINT fk_metComments FOREIGN KEY (metCommentsID) REFERENCES comments(commentID)
 );
 
-/* could use a trigger to set datecreated = sysdate on insert of new workout */
+/* could use a trigger to set datecreated = sysdate on insert of new workout or default to the sysdate*/
 CREATE TABLE workouts
 (
   workID INTEGER PRIMARY KEY AUTO_INCREMENT NOT NULL,
@@ -73,7 +73,36 @@ CREATE TABLE users
   CONSTRAINT fk_userWorkout FOREIGN KEY (workoutID) REFERENCES workouts(workID)
 );
 
-/* Will add Triggers soon, need extra prviliges to create and test them */
 
+--TEST Data uncomment this section if you wish to load it in to the DB for testing
+/*
+INSERT INTO comments(commentID, commentMessage) 
+    VALUES (1, 'This comment is a test');
 
-	
+INSERT INTO lifts (liftID, liftName, liftWeight, liftReps, liftSets, liftCommentsID)
+    VALUES(1, 'TestLift', 9001, 9001, 9001, 1);
+
+INSERT INTO movements (moveID, moveName, moveRounds, moveReps, moveCommentsID)
+    VALUES (1, 'TestMove', 1, 12, 1);
+
+--The metconID is intentionally left blank here to test the autoincrement feature
+
+INSERT INTO metcons (metName, metTime, metRX, metMovementsID, metCommentsID)
+    VALUES ('TestMet', '00:12:30', 1, 1, 1);
+
+INSERT INTO workouts (workID, workName, DateCreated, liftID, metconID)
+    VALUES (1, 'testWorkName', SYSDATE(), 1, 1);
+
+--A 0 in the userIsBanned field indicated that the user is not banned, a 1 means they are
+INSERT INTO users (userEmail, uFirstName, uLastName, userDateCreated, userIsBanned, workoutID)
+    VALUES ('test@genericemail.com', 'Test', 'Testerson', SYSDATE(), 0, 1);
+
+--To Delete these entries after testing be sure to remove these in reverse order of the way I have added them above to avoid conflicts with key references
+
+DELETE FROM users WHERE userID = 1;
+DELETE FROM workouts WHERE workID = 1;
+DELETE FROM metcons WHERE metconID = 1;
+DELETE FROM movements WHERE moveID = 1;
+DELETE FROM lifts WHERE liftID = 1;
+DELETE FROM comments WHERE commentID = 1;
+*/
